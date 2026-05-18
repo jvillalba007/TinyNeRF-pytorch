@@ -1,7 +1,8 @@
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
-from tqdm import tqdm
+from tqdm.notebook import tqdm            # <-- Versión de progreso optimizada para Colab
+from IPython.display import clear_output  # <-- Limpia la celda para el efecto de animación
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.set_default_dtype(torch.float32)
@@ -94,7 +95,9 @@ def render_rays(network_fn, rays_o, rays_d, near, far, N_samples, rand=False):
 
     return rgb_map, depth_map, acc_map
 
+# --- Bloque de ejecución principal directo en la celda ---
 if __name__ == "__main__":
+    # Asegúrate de tener el archivo 'tiny_nerf_data.npz' en el almacenamiento de Colab
     data = np.load('tiny_nerf_data.npz')
     images = data['images']
     poses = data['poses']
@@ -151,21 +154,24 @@ if __name__ == "__main__":
                 psnrs.append(psnr.item())
                 iternums.append(i)
 
+                # Borra la imagen anterior para dibujar la nueva en el mismo lugar
+                #clear_output(wait=True)
+
                 plt.figure(figsize=(12, 4))
                 plt.subplot(131)
                 plt.imshow(rgb.cpu().detach().numpy())
                 plt.title(f"Iteration {i}")
+                
                 plt.subplot(132)
                 plt.plot(iternums, psnrs)
                 plt.title("PSNR")
+                
                 plt.subplot(133)
                 plt.imshow(depth.cpu().detach().numpy(), cmap="gray")
                 plt.title("Depth Map")
 
-                # Auto close
-                plt.show(block=False)
-                plt.pause(1)
-                plt.close()
+                # Fuerza el renderizado inmediato en la celda de Colab
+                plt.show()
     
     print("Done")
 
