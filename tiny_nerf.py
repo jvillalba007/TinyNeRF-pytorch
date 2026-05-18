@@ -119,7 +119,7 @@ if __name__ == "__main__":
     N_iters = 10000
     psnrs = []
     iternums = []
-    i_plot = 100
+    i_plot = 1000
     lr = 5e-3
 
     # Define NeRF model, optimizer
